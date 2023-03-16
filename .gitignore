@@ -62,6 +62,7 @@ freetype/objs
 Debug-Nvidia
 Debug-AMD
 BIN-AMD
+.vs
 
 # --------------------------------------------------------
 # BEGIN Explictly Allowed Files (i.e. do NOT ignore these)
