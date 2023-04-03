@@ -27,13 +27,18 @@ GSPlay::~GSPlay()
 void GSPlay::Init()
 {
 	auto model = ResourceManagers::GetInstance()->GetModel("Sprite2D.nfg");
-	auto texture = ResourceManagers::GetInstance()->GetTexture("bg_play1.tga");
+	auto texture = ResourceManagers::GetInstance()->GetTexture("bg_main.tga");
+	auto shader = ResourceManagers::GetInstance()->GetShader("TextureShader");
 
 	// background
-	auto shader = ResourceManagers::GetInstance()->GetShader("TextureShader");
 	m_background = std::make_shared<Sprite2D>(model, shader, texture);
 	m_background->Set2DPosition((float)Globals::screenWidth / 2.0f, (float)Globals::screenHeight / 2.0f);
 	m_background->SetSize(Globals::screenWidth, Globals::screenHeight);
+	// background 2
+	texture = ResourceManagers::GetInstance()->GetTexture("bg_main.tga");
+	m_background2 = std::make_shared<Sprite2D>(model, shader, texture);
+	m_background2->Set2DPosition((float)Globals::screenWidth / 2.0f + Globals:: screenWidth , (float)Globals::screenHeight / 2.0f);
+	m_background2->SetSize(Globals::screenWidth, Globals::screenHeight);
 
 	// button close
 	texture = ResourceManagers::GetInstance()->GetTexture("btn_close.tga");
@@ -41,7 +46,7 @@ void GSPlay::Init()
 	button->Set2DPosition(Globals::screenWidth - 50.0f, 50.0f);
 	button->SetSize(50, 50);
 	button->SetOnClick([this]() {
-			GameStateMachine::GetInstance()->PopState();
+		GameStateMachine::GetInstance()->PopState();
 		});
 	m_listButton.push_back(button);
 
@@ -53,10 +58,10 @@ void GSPlay::Init()
 
 	//animation
 	shader = ResourceManagers::GetInstance()->GetShader("Animation");
-	texture = ResourceManagers::GetInstance()->GetTexture("Actor1_2.tga");
-	std::shared_ptr<SpriteAnimation> obj = std::make_shared<SpriteAnimation>(model, shader, texture, 9, 6, 3, 0.1f);
+	texture = ResourceManagers::GetInstance()->GetTexture("Astronaut_Run.tga");
+	std::shared_ptr<SpriteAnimation> obj = std::make_shared<SpriteAnimation>(model, shader, texture, 6, 1, 0, 0.1f);
 	obj->Set2DPosition(240.0f, 400.0f);
-	obj->SetSize(30, 40);
+	obj->SetSize(70, 70);
 	m_listAnimation.push_back(obj);
 	m_KeyPress = 0;
 }
@@ -80,7 +85,7 @@ void GSPlay::HandleEvents()
 	//Handle key event, insert more condition if you want to handle more than 4 default key
 	if (m_KeyPress & 1)//Handle event when key 'A' was pressed
 	{
-		//Code to handle event
+		
 	}
 	if (m_KeyPress & (1 << 1))//Handle event when key 'S' was pressed
 	{
@@ -106,13 +111,13 @@ void GSPlay::HandleKeyEvents(int key, bool bIsPressed)//Insert more case if you 
 			m_KeyPress |= 1;
 			break;
 		case KEY_MOVE_BACKWARD://Key 'S' was pressed
-			m_KeyPress |= 1<<1;
+			m_KeyPress |= 1 << 1;
 			break;
 		case KEY_MOVE_RIGHT://Key 'D' was pressed
-			m_KeyPress |= 1<<2;
+			m_KeyPress |= 1 << 2;
 			break;
 		case KEY_MOVE_FORWARD://Key 'W' was pressed
-			m_KeyPress |= 1<<3;
+			m_KeyPress |= 1 << 3;
 			break;
 		default:
 			break;
@@ -145,7 +150,7 @@ void GSPlay::HandleTouchEvents(float x, float y, bool bIsPressed)
 {
 	for (auto button : m_listButton)
 	{
-		if(button->HandleTouchEvents(x, y, bIsPressed))
+		if (button->HandleTouchEvents(x, y, bIsPressed))
 		{
 			break;
 		}
@@ -160,7 +165,17 @@ void GSPlay::HandleMouseMoveEvents(float x, float y)
 void GSPlay::Update(float deltaTime)
 {
 	HandleEvents();
-
+	// moving background
+	m_background->Set2DPosition(m_background->Get2DPosition().x - 100.0f * deltaTime, m_background->Get2DPosition().y);
+	m_background2->Set2DPosition(m_background2->Get2DPosition().x - 100.0f * deltaTime, m_background2->Get2DPosition().y);
+	if (m_background->Get2DPosition().x < (float) -Globals::screenWidth / 2)
+	{
+		m_background->Set2DPosition(m_background->Get2DPosition().x + Globals::screenWidth * 2, m_background->Get2DPosition().y);
+	}
+	if (m_background2->Get2DPosition().x < (float)-Globals::screenWidth / 2)
+	{
+		m_background2->Set2DPosition(m_background2->Get2DPosition().x + Globals::screenWidth * 2, m_background2->Get2DPosition().y);
+	}
 	//Update button list
 	for (auto it : m_listButton)
 	{
@@ -178,6 +193,7 @@ void GSPlay::Draw()
 {
 	//Render background
 	m_background->Draw();
+	m_background2->Draw();
 
 	//Render score text
 	m_score->Draw();

@@ -1,10 +1,10 @@
-#include "targetver.h"
+ #include "targetver.h"
 #include "Shader.h"
 #include "Application.h"
 #include "utilities.h" 
 
-int Globals::screenWidth = 480;
-int Globals::screenHeight = 800;
+int Globals::screenWidth = 800;
+int Globals::screenHeight = 480;
 
 GLint Init(ESContext* esContext)
 {
