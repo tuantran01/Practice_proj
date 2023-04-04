@@ -23,6 +23,9 @@ GSPlay::~GSPlay()
 {
 }
 
+std::shared_ptr<SpriteAnimation> mainObj = nullptr;
+std::string sound = "Run-Amok.mp3";
+std::int32_t score = 0;
 
 void GSPlay::Init()
 {
@@ -52,7 +55,7 @@ void GSPlay::Init()
 
 	// score
 	shader = ResourceManagers::GetInstance()->GetShader("TextShader");
-	std::shared_ptr<Font> font = ResourceManagers::GetInstance()->GetFont("Brightly Crush Shine.otf");
+	std::shared_ptr<Font> font = ResourceManagers::GetInstance()->GetFont("slkscrb.ttf");
 	m_score = std::make_shared< Text>(shader, font, "score: 10", TextColor::RED, 1.0f);
 	m_score->Set2DPosition(Vector2(5.0f, 25.0f));
 
@@ -64,7 +67,16 @@ void GSPlay::Init()
 	obj->SetSize(70, 70);
 	m_listAnimation.push_back(obj);
 	m_KeyPress = 0;
+	mainObj = obj;
+	m_listAnimation.push_back(mainObj);
+
+	//sound
+	std::string name = "Lobby-Time.mp3";
+	ResourceManagers::GetInstance()->StopSound(name);
+	ResourceManagers::GetInstance()->PlaySound(sound, true);
 }
+
+
 
 void GSPlay::Exit()
 {
@@ -89,7 +101,7 @@ void GSPlay::HandleEvents()
 	}
 	if (m_KeyPress & (1 << 1))//Handle event when key 'S' was pressed
 	{
-		//Code to handle event
+		mainObj->Set2DPosition(mainObj->Get2DPosition().x, mainObj->Get2DPosition().y + 1);
 	}
 	if (m_KeyPress & (1 << 2))//Handle event when key 'D' was pressed
 	{
@@ -97,7 +109,7 @@ void GSPlay::HandleEvents()
 	}
 	if (m_KeyPress & (1 << 3))//Handle event when key 'W' was pressed
 	{
-		//Code to handle event
+		mainObj->Set2DPosition(mainObj->Get2DPosition().x, mainObj->Get2DPosition().y - 1);
 	}
 }
 
@@ -176,6 +188,10 @@ void GSPlay::Update(float deltaTime)
 	{
 		m_background2->Set2DPosition(m_background2->Get2DPosition().x + Globals::screenWidth * 2, m_background2->Get2DPosition().y);
 	}
+	//score
+	score += 1 * deltaTime;
+	std::string str = "score: " + std::to_string(score);
+	m_score->SetText(str);
 	//Update button list
 	for (auto it : m_listButton)
 	{

@@ -15,7 +15,7 @@ GSMenu::~GSMenu()
 void GSMenu::Init()
 {
 	auto model = ResourceManagers::GetInstance()->GetModel("Sprite2D.nfg");
-	auto texture = ResourceManagers::GetInstance()->GetTexture("bg_main_menu.tga");
+	auto texture = ResourceManagers::GetInstance()->GetTexture("bg_main.tga");
 
 	// background
 	auto shader = ResourceManagers::GetInstance()->GetShader("TextureShader");
@@ -26,8 +26,8 @@ void GSMenu::Init()
 	// play button
 	texture = ResourceManagers::GetInstance()->GetTexture("btn_play.tga");
 	std::shared_ptr<GameButton> button = std::make_shared<GameButton>(model, shader, texture);
-	button->Set2DPosition(Globals::screenWidth / 2.0f, Globals::screenHeight / 2.0f);
-	button->SetSize(200, 200);
+	button->Set2DPosition(Globals::screenWidth / 2.0f , (float)(Globals::screenHeight / 2.0f) + 50.0f);
+	button->SetSize(150, 150);
 	button->SetOnClick([]() {
 			GameStateMachine::GetInstance()->ChangeState(StateType::STATE_PLAY);
 		});
@@ -46,10 +46,10 @@ void GSMenu::Init()
 	// game title
 	shader = ResourceManagers::GetInstance()->GetShader("TextShader");
 	std::shared_ptr<Font> font = ResourceManagers::GetInstance()->GetFont("slkscrb.ttf");
-	m_textGameName = std::make_shared< Text>(shader, font, "Enless Run", Vector4(0.0f, 0.0f, 0.0f, 1.0f), 3.0f);
-	m_textGameName->Set2DPosition(Vector2(180, 150));
+	m_textGameName = std::make_shared< Text>(shader, font, "Endless Run", Vector4(0.0f, 0.0f, 0.0f, 1.0f), 3.0f);
+	m_textGameName->Set2DPosition(Vector2(120, 150));
 
-	std::string name = "Alarm01.wav";
+	std::string name = "Lobby-Time.mp3";
 	ResourceManagers::GetInstance()->PlaySound(name);
 }
 
