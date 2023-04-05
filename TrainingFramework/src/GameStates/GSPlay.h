@@ -27,10 +27,12 @@ public:
 	void	Update(float deltaTime) override;
 	void	Draw() override;
 	int m_KeyPress;
+	bool CheckCollision(std::shared_ptr<SpriteAnimation> &one, std::shared_ptr<SpriteAnimation> &two);
 
 private:
 	std::shared_ptr<Sprite2D>	m_background;
 	std::shared_ptr<Sprite2D>	m_background2;
+	std::list<std::shared_ptr<Sprite2D>> m_listObstacle;
 	std::shared_ptr<Text>		m_score;
 	std::list<std::shared_ptr<GameButton>>	m_listButton;
 	std::list<std::shared_ptr<SpriteAnimation>>	m_listAnimation;

@@ -142,3 +142,14 @@ void SpriteAnimation::SetSize(GLint width, GLint height)
 	m_scale = Vector3((float)m_iWidth, (float)m_iHeight, 1.0f);
 	CalculateWorldMatrix();
 }
+
+float SpriteAnimation::GetWidth() 
+{
+	return (float)m_iWidth;
+}
+
+float SpriteAnimation::GetHeight()
+{
+	return (float)m_iHeight;
+}
+
