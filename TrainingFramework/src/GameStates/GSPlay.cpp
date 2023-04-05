@@ -1,5 +1,6 @@
 #include "GSPlay.h"
 
+#include <stdlib.h>
 #include "Shader.h"
 #include "Texture.h"
 #include "Model.h"
@@ -24,8 +25,11 @@ GSPlay::~GSPlay()
 }
 
 std::shared_ptr<SpriteAnimation> mainObj = nullptr;
+std::shared_ptr<SpriteAnimation> obstacleObj = nullptr;
 std::string sound = "Run-Amok.mp3";
 std::int32_t score = 0;
+std::float_t f_speed = 2.0f;
+std::float_t f_backgroundSpeed = 200.0f;
 
 void GSPlay::Init()
 {
@@ -70,6 +74,14 @@ void GSPlay::Init()
 	mainObj = obj;
 	m_listAnimation.push_back(mainObj);
 
+	//obstacle
+	shader = ResourceManagers::GetInstance()->GetShader("Animation");
+	texture = ResourceManagers::GetInstance()->GetTexture("coin.tga");
+	std::shared_ptr<SpriteAnimation> obj2 = std::make_shared<SpriteAnimation>(model, shader, texture, 12, 1, 0, 0.1f);
+	obj2->Set2DPosition(-1.0f, -1.0f);
+	obj2->SetSize(50, 50);
+	obstacleObj = obj2;
+	m_listAnimation.push_back(obstacleObj);
 	//sound
 	std::string name = "Lobby-Time.mp3";
 	ResourceManagers::GetInstance()->StopSound(name);
@@ -101,7 +113,14 @@ void GSPlay::HandleEvents()
 	}
 	if (m_KeyPress & (1 << 1))//Handle event when key 'S' was pressed
 	{
-		mainObj->Set2DPosition(mainObj->Get2DPosition().x, mainObj->Get2DPosition().y + 1);
+		if (mainObj->Get2DPosition().y >= (float)Globals::screenHeight)
+		{
+			mainObj->Set2DPosition(mainObj->Get2DPosition().x, mainObj->Get2DPosition().y);
+		}
+		else
+		{
+			mainObj->Set2DPosition(mainObj->Get2DPosition().x, mainObj->Get2DPosition().y + f_speed);
+		}
 	}
 	if (m_KeyPress & (1 << 2))//Handle event when key 'D' was pressed
 	{
@@ -109,7 +128,15 @@ void GSPlay::HandleEvents()
 	}
 	if (m_KeyPress & (1 << 3))//Handle event when key 'W' was pressed
 	{
-		mainObj->Set2DPosition(mainObj->Get2DPosition().x, mainObj->Get2DPosition().y - 1);
+		if (mainObj->Get2DPosition().y <= 0)
+		{
+			mainObj->Set2DPosition(mainObj->Get2DPosition().x, mainObj->Get2DPosition().y);
+		}
+		else
+		{
+			mainObj->Set2DPosition(mainObj->Get2DPosition().x, mainObj->Get2DPosition().y - f_speed);
+		}
+
 	}
 }
 
@@ -178,8 +205,8 @@ void GSPlay::Update(float deltaTime)
 {
 	HandleEvents();
 	// moving background
-	m_background->Set2DPosition(m_background->Get2DPosition().x - 100.0f * deltaTime, m_background->Get2DPosition().y);
-	m_background2->Set2DPosition(m_background2->Get2DPosition().x - 100.0f * deltaTime, m_background2->Get2DPosition().y);
+	m_background->Set2DPosition(m_background->Get2DPosition().x - f_backgroundSpeed * deltaTime, m_background->Get2DPosition().y);
+	m_background2->Set2DPosition(m_background2->Get2DPosition().x - f_backgroundSpeed * deltaTime, m_background2->Get2DPosition().y);
 	if (m_background->Get2DPosition().x < (float) -Globals::screenWidth / 2)
 	{
 		m_background->Set2DPosition(m_background->Get2DPosition().x + Globals::screenWidth * 2, m_background->Get2DPosition().y);
@@ -188,10 +215,25 @@ void GSPlay::Update(float deltaTime)
 	{
 		m_background2->Set2DPosition(m_background2->Get2DPosition().x + Globals::screenWidth * 2, m_background2->Get2DPosition().y);
 	}
+	//ObstacleMoving
+	obstacleObj->Set2DPosition(obstacleObj->Get2DPosition().x - f_backgroundSpeed * deltaTime, obstacleObj->Get2DPosition().y);
+	
+	if (obstacleObj->Get2DPosition().x <= 0)
+	{
+		int temp = rand() % 451 + 10 ;
+		obstacleObj->Set2DPosition(800.0f,(GLfloat) temp );
+	}
+	
 	//score
 	score += 1 * deltaTime;
 	std::string str = "score: " + std::to_string(score);
 	m_score->SetText(str);
+
+	//checking collision
+	if (CheckCollision(mainObj, obstacleObj))
+	{
+		printf("Collided\n");
+	}
 	//Update button list
 	for (auto it : m_listButton)
 	{
@@ -225,4 +267,18 @@ void GSPlay::Draw()
 	{
 		it->Draw();
 	}
+
+}
+
+
+bool GSPlay::CheckCollision(std::shared_ptr<SpriteAnimation> &one, std::shared_ptr<SpriteAnimation> &two)
+{
+	// collision x-axis?
+	bool collisionX = one->Get2DPosition().x + one->GetWidth() >= two->Get2DPosition().x &&
+		two->Get2DPosition().x + two->GetWidth() >= one->Get2DPosition().x;
+	// collision y-axis?
+	bool collisionY = one->Get2DPosition().y + one->GetHeight() >= two->Get2DPosition().y &&
+		two->Get2DPosition().y + two->GetHeight() >= one->Get2DPosition().y;
+	// collision only if on both axes
+	return collisionX && collisionY;
 }
