@@ -23,5 +23,6 @@ public:
 	Vector2		Get2DPosition();
 	void		SetRotation(Vector3 rotation);
 	void		SetSize(GLint width, GLint height);
+	Vector2 	GetSize();
 };
 

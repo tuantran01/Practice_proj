@@ -24,11 +24,17 @@ GSPlay::~GSPlay()
 {
 }
 
+
+
 std::shared_ptr<SpriteAnimation> mainObj = nullptr;
-std::shared_ptr<SpriteAnimation> obstacleObj = nullptr;
+std::shared_ptr<SpriteAnimation> obstacleObj = nullptr,
+								 obstacleObj1 = nullptr,
+								 obstacleObj2 = nullptr,
+                                 obstacleObj3 = nullptr;
 std::string sound = "Run-Amok.mp3";
 std::int32_t score = 0;
-std::float_t f_speed = 2.0f;
+std::float_t f_speed = 0.0f;
+std::float_t f_gravity = 200.0f;
 std::float_t f_backgroundSpeed = 200.0f;
 
 void GSPlay::Init()
@@ -42,10 +48,30 @@ void GSPlay::Init()
 	m_background->Set2DPosition((float)Globals::screenWidth / 2.0f, (float)Globals::screenHeight / 2.0f);
 	m_background->SetSize(Globals::screenWidth, Globals::screenHeight);
 	// background 2
-	texture = ResourceManagers::GetInstance()->GetTexture("bg_main.tga");
 	m_background2 = std::make_shared<Sprite2D>(model, shader, texture);
 	m_background2->Set2DPosition((float)Globals::screenWidth / 2.0f + Globals:: screenWidth , (float)Globals::screenHeight / 2.0f);
 	m_background2->SetSize(Globals::screenWidth, Globals::screenHeight);
+
+	// ground
+	texture = ResourceManagers::GetInstance()->GetTexture("Ground.tga");
+	m_ground = std::make_shared<Sprite2D>(model, shader, texture);
+	m_ground->SetSize(Globals::screenWidth / 2.0f, 100);
+	m_ground->Set2DPosition((float)m_ground->GetSize().x / 2.0f, (float)Globals::screenHeight - 50.0f);
+
+	// ground 2
+	m_ground2 = std::make_shared<Sprite2D>(model, shader, texture);
+	m_ground2->SetSize(Globals::screenWidth / 2.0f, 100);
+	m_ground2->Set2DPosition((float)Globals::screenWidth - m_ground2->GetSize().x / 2.0f, (float)Globals::screenHeight - 50.0f);
+	
+	// ground 3
+	m_ground3 = std::make_shared<Sprite2D>(model, shader, texture);
+	m_ground3->SetSize(Globals::screenWidth / 2.0f, 100);
+	m_ground3->Set2DPosition((float)Globals::screenWidth + m_ground3->GetSize().x / 2.0f, (float)Globals::screenHeight - 50.0f);
+
+	// ground 4
+	m_ground4 = std::make_shared<Sprite2D>(model, shader, texture);
+	m_ground4->SetSize(Globals::screenWidth / 2.0f, 100);
+	m_ground4->Set2DPosition((float)Globals::screenWidth * 2 - m_ground4->GetSize().x / 2.0f, (float)Globals::screenHeight - 50.0f);
 
 	// button close
 	texture = ResourceManagers::GetInstance()->GetTexture("btn_close.tga");
@@ -60,28 +86,58 @@ void GSPlay::Init()
 	// score
 	shader = ResourceManagers::GetInstance()->GetShader("TextShader");
 	std::shared_ptr<Font> font = ResourceManagers::GetInstance()->GetFont("slkscrb.ttf");
-	m_score = std::make_shared< Text>(shader, font, "score: 10", TextColor::RED, 1.0f);
+	m_score = std::make_shared< Text>(shader, font, "0", TextColor::RED, 1.0f);
 	m_score->Set2DPosition(Vector2(5.0f, 25.0f));
 
 	//animation
 	shader = ResourceManagers::GetInstance()->GetShader("Animation");
 	texture = ResourceManagers::GetInstance()->GetTexture("Astronaut_Run.tga");
 	std::shared_ptr<SpriteAnimation> obj = std::make_shared<SpriteAnimation>(model, shader, texture, 6, 1, 0, 0.1f);
-	obj->Set2DPosition(240.0f, 400.0f);
+	obj->Set2DPosition(240.0f, (float)Globals::screenHeight - 100);
 	obj->SetSize(70, 70);
 	m_listAnimation.push_back(obj);
 	m_KeyPress = 0;
 	mainObj = obj;
 	m_listAnimation.push_back(mainObj);
 
-	//obstacle
+	//coin
 	shader = ResourceManagers::GetInstance()->GetShader("Animation");
 	texture = ResourceManagers::GetInstance()->GetTexture("coin.tga");
 	std::shared_ptr<SpriteAnimation> obj2 = std::make_shared<SpriteAnimation>(model, shader, texture, 12, 1, 0, 0.1f);
-	obj2->Set2DPosition(-1.0f, -1.0f);
-	obj2->SetSize(50, 50);
+	obj2->Set2DPosition(500.0f, 500.0f);
+	obj2->SetSize(0, 0);
 	obstacleObj = obj2;
-	m_listAnimation.push_back(obstacleObj);
+	m_listObstacle.push_back(obstacleObj);
+
+	std::shared_ptr<SpriteAnimation> obj3 = std::make_shared<SpriteAnimation>(model, shader, texture, 12, 1, 0, 0.1f);
+	obj3->Set2DPosition(-1.0f, -1.0f);
+	obj3->SetSize(0, 0);
+	obstacleObj1 = obj3;
+	m_listObstacle.push_back(obstacleObj1);
+
+	std::shared_ptr<SpriteAnimation> obj4 = std::make_shared<SpriteAnimation>(model, shader, texture, 12, 1, 0, 0.1f);
+	obj4->Set2DPosition(-1.0f, -1.0f);
+	obj4->SetSize(0, 0);
+	obstacleObj2 = obj4;
+	m_listObstacle.push_back(obstacleObj2);
+
+	std::shared_ptr<SpriteAnimation> obj5 = std::make_shared<SpriteAnimation>(model, shader, texture, 12, 1, 0, 0.1f);
+	obj5->Set2DPosition(-1.0f, -1.0f);
+	obj5->SetSize(0, 0);
+	obstacleObj3 = obj5;
+	m_listObstacle.push_back(obstacleObj3);
+
+	//Obstacle
+	/*shader = ResourceManagers::GetInstance()->GetShader("Animation");
+	texture = ResourceManagers::GetInstance()->GetTexture("Obstacle.tga");
+	std::shared_ptr<SpriteAnimation> obj6 = std::make_shared<SpriteAnimation>(model, shader, texture, 6, 1, 0, 0.1f);
+	obj6->Set2DPosition(500.0f, 500.0f);
+	obj6->SetSize(0, 0);
+	obstacleObj4 = obj6;*/
+
+
+
+
 	//sound
 	std::string name = "Lobby-Time.mp3";
 	ResourceManagers::GetInstance()->StopSound(name);
@@ -105,6 +161,7 @@ void GSPlay::Resume()
 
 
 void GSPlay::HandleEvents()
+
 {
 	//Handle key event, insert more condition if you want to handle more than 4 default key
 	if (m_KeyPress & 1)//Handle event when key 'A' was pressed
@@ -113,14 +170,7 @@ void GSPlay::HandleEvents()
 	}
 	if (m_KeyPress & (1 << 1))//Handle event when key 'S' was pressed
 	{
-		if (mainObj->Get2DPosition().y >= (float)Globals::screenHeight)
-		{
-			mainObj->Set2DPosition(mainObj->Get2DPosition().x, mainObj->Get2DPosition().y);
-		}
-		else
-		{
-			mainObj->Set2DPosition(mainObj->Get2DPosition().x, mainObj->Get2DPosition().y + f_speed);
-		}
+		
 	}
 	if (m_KeyPress & (1 << 2))//Handle event when key 'D' was pressed
 	{
@@ -203,7 +253,15 @@ void GSPlay::HandleMouseMoveEvents(float x, float y)
 
 void GSPlay::Update(float deltaTime)
 {
+	f_speed = 500.0f;
+	f_speed *= deltaTime;
 	HandleEvents();
+	// Gravity
+	if (mainObj->Get2DPosition().y < (float)Globals::screenHeight - 100)
+	{
+		float f_velocity = f_gravity * deltaTime;
+		mainObj->Set2DPosition(mainObj->Get2DPosition().x, mainObj->Get2DPosition().y + f_velocity );
+	}
 	// moving background
 	m_background->Set2DPosition(m_background->Get2DPosition().x - f_backgroundSpeed * deltaTime, m_background->Get2DPosition().y);
 	m_background2->Set2DPosition(m_background2->Get2DPosition().x - f_backgroundSpeed * deltaTime, m_background2->Get2DPosition().y);
@@ -215,25 +273,52 @@ void GSPlay::Update(float deltaTime)
 	{
 		m_background2->Set2DPosition(m_background2->Get2DPosition().x + Globals::screenWidth * 2, m_background2->Get2DPosition().y);
 	}
-	//ObstacleMoving
-	obstacleObj->Set2DPosition(obstacleObj->Get2DPosition().x - f_backgroundSpeed * deltaTime, obstacleObj->Get2DPosition().y);
-	
-	if (obstacleObj->Get2DPosition().x <= 0)
-	{
-		int temp = rand() % 451 + 10 ;
-		obstacleObj->Set2DPosition(800.0f,(GLfloat) temp );
-	}
-	
-	//score
-	score += 1 * deltaTime;
-	std::string str = "score: " + std::to_string(score);
-	m_score->SetText(str);
 
-	//checking collision
-	if (CheckCollision(mainObj, obstacleObj))
+	// moving ground
+	m_ground->Set2DPosition(m_ground->Get2DPosition().x - f_backgroundSpeed * deltaTime, m_ground->Get2DPosition().y);
+	m_ground2->Set2DPosition(m_ground2->Get2DPosition().x - f_backgroundSpeed * deltaTime, m_ground2->Get2DPosition().y);
+	m_ground3->Set2DPosition(m_ground3->Get2DPosition().x - f_backgroundSpeed * deltaTime, m_ground3->Get2DPosition().y);
+
+	if (m_ground->Get2DPosition().x < (float)-Globals::screenWidth / 2)
 	{
-		printf("Collided\n");
+		m_ground->Set2DPosition(m_ground->Get2DPosition().x + Globals::screenWidth * 2, m_ground->Get2DPosition().y);
 	}
+	if (m_ground2->Get2DPosition().x < (float)-Globals::screenWidth / 2)
+	{
+		m_ground2->Set2DPosition(m_ground2->Get2DPosition().x + Globals::screenWidth * 2, m_ground2->Get2DPosition().y);
+	}
+
+	//ObstacleMoving
+	
+	for (auto it : m_listObstacle)
+	{
+		it->Set2DPosition(it->Get2DPosition().x - f_backgroundSpeed * deltaTime, it->Get2DPosition().y);
+		
+
+		if (it->Get2DPosition().x <= 0)
+		{
+			it->SetSize(50.0f, 50.0f);
+			int temp = rand() % 451 + 10;
+			it->Set2DPosition(1280.0f, (GLfloat)temp);
+		}
+	}
+	
+	
+
+	// check collision
+	for (auto it : m_listObstacle)
+	{
+		if (CheckCollision(mainObj, it))
+		{
+			it->SetSize(0,0);
+			score +=1;
+			m_score->SetText(std::to_string(score));
+			m_score->Update(deltaTime);
+			break;
+		}
+	}
+
+
 	//Update button list
 	for (auto it : m_listButton)
 	{
@@ -245,6 +330,12 @@ void GSPlay::Update(float deltaTime)
 	{
 		it->Update(deltaTime);
 	}
+
+	//Update Obstacle list
+	for (auto it : m_listObstacle)
+	{
+		it->Update(deltaTime);
+	}
 }
 
 void GSPlay::Draw()
@@ -252,6 +343,10 @@ void GSPlay::Draw()
 	//Render background
 	m_background->Draw();
 	m_background2->Draw();
+
+	//Render ground
+	m_ground->Draw();
+	m_ground2->Draw();
 
 	//Render score text
 	m_score->Draw();
@@ -268,6 +363,11 @@ void GSPlay::Draw()
 		it->Draw();
 	}
 
+	//Render Obstacle list
+	for (auto it : m_listObstacle)
+	{
+		it->Draw();
+	}
 }
 
 
