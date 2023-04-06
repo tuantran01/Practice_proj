@@ -13,6 +13,7 @@ protected:
 	GLint			m_currentAction;//index from 0 to m_numActions-1
 
 public:
+	SpriteAnimation();
 	SpriteAnimation(std::shared_ptr<Model> model, std::shared_ptr<Shader> shader, std::shared_ptr<Texture> texture, GLint numFrames, GLint numActions, GLint currentAction, GLfloat frameTime);
 	~SpriteAnimation();
 

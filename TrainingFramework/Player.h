@@ -18,5 +18,5 @@ public :
 	void Draw();
 	
 private:
-	bool 
+	float m_speed;
 };

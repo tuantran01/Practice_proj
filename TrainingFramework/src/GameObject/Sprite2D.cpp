@@ -125,3 +125,8 @@ Vector2 Sprite2D::Get2DPosition()
 {
 	return Vector2(m_position.x, m_position.y);
 }
+
+Vector2 Sprite2D::GetSize()
+{
+	return Vector2(m_iWidth, m_iHeight);
+}
