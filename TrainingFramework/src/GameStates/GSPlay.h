@@ -32,12 +32,12 @@ public:
 private:
 	std::shared_ptr<Sprite2D>	m_background;
 	std::shared_ptr<Sprite2D>	m_background2;
-	std::shared_ptr<Sprite2D>	m_ground, m_ground2, m_ground3, m_ground4;
-	std::list<std::shared_ptr<SpriteAnimation>> m_listObstacle;
+	std::shared_ptr<Sprite2D>	m_ground, m_ground2;
 	std::shared_ptr<Text>		m_score;
 	std::list<std::shared_ptr<GameButton>>	m_listButton;
 	std::list<std::shared_ptr<SpriteAnimation>>	m_listAnimation;
-	std::list<std::shared_ptr<SpriteAnimation>> m_Coin;
+	std::list<std::shared_ptr<SpriteAnimation>> m_listObstacle;
+	std::list<std::shared_ptr<SpriteAnimation>> m_listCoin;
 
 };
 

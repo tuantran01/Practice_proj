@@ -45,3 +45,4 @@ bool GameButton::IsHolding()
 {
 	return m_isHolding;
 }
+
