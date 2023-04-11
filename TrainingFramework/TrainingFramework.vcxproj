@@ -358,6 +358,7 @@
     <ClCompile Include="src\GameObject\Texture.cpp" />
     <ClCompile Include="src\GameStates\GameStateBase.cpp" />
     <ClCompile Include="src\GameStates\GameStateMachine.cpp" />
+    <ClCompile Include="src\GameStates\GSGameOver.cpp" />
     <ClCompile Include="src\GameStates\GSIntro.cpp" />
     <ClCompile Include="src\GameStates\GSMenu.cpp" />
     <ClCompile Include="src\GameStates\GSPlay.cpp" />
@@ -382,6 +383,7 @@
     <ClInclude Include="src\GameObject\Texture.h" />
     <ClInclude Include="src\GameStates\GameStateBase.h" />
     <ClInclude Include="src\GameStates\GameStateMachine.h" />
+    <ClInclude Include="src\GameStates\GSGameOver.h" />
     <ClInclude Include="src\GameStates\GSIntro.h" />
     <ClInclude Include="src\GameStates\GSMenu.h" />
     <ClInclude Include="src\GameStates\GSPlay.h" />

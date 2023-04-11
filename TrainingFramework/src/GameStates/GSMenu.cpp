@@ -43,15 +43,36 @@ void GSMenu::Init()
 		});
 	m_listButton.push_back(button);
 
+	//mute button
+	texture = ResourceManagers::GetInstance()->GetTexture("btn_music.tga");
+	button = std::make_shared<GameButton>(model, shader, texture);
+	button->Set2DPosition(Globals::screenWidth - 50.0f, Globals::screenHeight - 50);
+	button->SetSize(50, 50);
+	button->SetOnClick([button, &texture]() {
+		//Change texture on click
+		std::cout << "Mute button clicked" << std::endl;
+		if (texture == ResourceManagers::GetInstance()->GetTexture("btn_music.tga"))
+		{
+			button->SetTexture(ResourceManagers::GetInstance()->GetTexture("btn_music_off.tga"));
+			texture = ResourceManagers::GetInstance()->GetTexture("btn_music_off.tga");
+		}
+		else
+		{
+			button->SetTexture(ResourceManagers::GetInstance()->GetTexture("btn_music.tga"));
+			texture = ResourceManagers::GetInstance()->GetTexture("btn_music.tga");
+		}
+	});
+	m_listButton.push_back(button);
+
 	// game title
 	shader = ResourceManagers::GetInstance()->GetShader("TextShader");
 	std::shared_ptr<Font> font = ResourceManagers::GetInstance()->GetFont("slkscrb.ttf");
-	m_textGameName = std::make_shared< Text>(shader, font, "Endless Run", Vector4(0.0f, 0.0f, 0.0f, 1.0f), 3.0f);
-	m_textGameName->Set2DPosition(Vector2(120, 150));
+	m_textGameName = std::make_shared< Text>(shader, font, "Space Runner ", TextColor::WHITE, 2.0f);
+	m_textGameName->Set2DPosition(Vector2(160, 150));
 
 	std::string name = "Lobby-Time.mp3";
 	ResourceManagers::GetInstance()->PlaySound(name);
-}
+} 
 
 void GSMenu::Exit()
 {

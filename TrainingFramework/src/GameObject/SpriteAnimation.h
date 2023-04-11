@@ -27,7 +27,6 @@ public:
 	Vector2		Get2DPosition();
 	void		SetSize(GLint width, GLint height);
 
-	float		GetWidth();
-	float		GetHeight();
+	Vector2		GetSize();
 };
 
