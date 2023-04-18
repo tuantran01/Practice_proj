@@ -21,7 +21,7 @@ public:
 	void	HandleMouseMoveEvents(float x, float y) override;
 	void	Update(float deltaTime) override;
 	void	Draw() override;
-
+	std:: shared_ptr<GameButton> m_buttonMute;
 private:
 	std::shared_ptr<Sprite2D>				m_background;
 	std::list<std::shared_ptr<GameButton>>	m_listButton;

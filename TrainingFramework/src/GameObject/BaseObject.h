@@ -41,6 +41,7 @@ public:
 	void SetShaders(std::shared_ptr<Shader> shader) { m_pShader = shader; }
 
 	void SetTexture(std::shared_ptr<Texture> texture) { m_pTexture = texture; }
+	std::shared_ptr<Texture> GetTexture() { return m_pTexture; }
 
 	void SetPosition(Vector3 position) { m_position = position; }
 	Vector3 GetPosition() { return m_position; }

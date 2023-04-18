@@ -39,30 +39,35 @@ void GSMenu::Init()
 	button->Set2DPosition(Globals::screenWidth - 50.0f, 50.0f);
 	button->SetSize(50, 50);
 	button->SetOnClick([]() {
+
 		exit(0);
 		});
 	m_listButton.push_back(button);
 
 	//mute button
+	ResourceManagers::GetInstance()->is_muted = false;
 	texture = ResourceManagers::GetInstance()->GetTexture("btn_music.tga");
 	button = std::make_shared<GameButton>(model, shader, texture);
 	button->Set2DPosition(Globals::screenWidth - 50.0f, Globals::screenHeight - 50);
 	button->SetSize(50, 50);
-	button->SetOnClick([button, &texture]() {
+	button->SetOnClick([button, texture]() {
 		//Change texture on click
-		std::cout << "Mute button clicked" << std::endl;
-		if (texture == ResourceManagers::GetInstance()->GetTexture("btn_music.tga"))
+		if (button->GetTexture() == ResourceManagers::GetInstance()->GetTexture("btn_music.tga"))
 		{
 			button->SetTexture(ResourceManagers::GetInstance()->GetTexture("btn_music_off.tga"));
-			texture = ResourceManagers::GetInstance()->GetTexture("btn_music_off.tga");
+			ResourceManagers ::GetInstance()->StopSound("Lobby-Time.mp3");
+			ResourceManagers ::GetInstance()->is_muted = true;
+			
 		}
 		else
 		{
 			button->SetTexture(ResourceManagers::GetInstance()->GetTexture("btn_music.tga"));
-			texture = ResourceManagers::GetInstance()->GetTexture("btn_music.tga");
+			ResourceManagers::GetInstance()->PlaySound("Lobby-Time.mp3");
+			ResourceManagers::GetInstance()->is_muted = false;
 		}
 	});
 	m_listButton.push_back(button);
+
 
 	// game title
 	shader = ResourceManagers::GetInstance()->GetShader("TextShader");

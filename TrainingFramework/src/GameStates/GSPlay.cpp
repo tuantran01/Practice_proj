@@ -71,11 +71,31 @@ void GSPlay::Init()
 	m_ground2->Set2DPosition((float)Globals::screenWidth / 2.0f + Globals::screenWidth, (float)Globals::screenHeight - 50.0f);
 	
 	// button pause
-	texture = ResourceManagers::GetInstance()->GetTexture("btn_pause.tga");
+	if (ResourceManagers::GetInstance()->is_muted)
+	{
+		texture = ResourceManagers::GetInstance()->GetTexture("btn_music_off.tga");
+	}
+	else
+	{
+		texture = ResourceManagers::GetInstance()->GetTexture("btn_music.tga");
+	}
 	std::shared_ptr<GameButton>  button = std::make_shared<GameButton>(model, shader, texture);
 	button->Set2DPosition(Globals::screenWidth - 100.0f, 50.0f);
 	button->SetSize(50, 50);
-	button->SetOnClick([this]() {
+	button->SetOnClick([button]() {
+		if (button->GetTexture() == ResourceManagers::GetInstance()->GetTexture("btn_music.tga"))
+		{
+			button->SetTexture(ResourceManagers::GetInstance()->GetTexture("btn_music_off.tga"));
+			ResourceManagers::GetInstance()->StopSound(sound);
+			ResourceManagers::GetInstance()->is_muted = true;
+
+		}
+		else
+		{
+			button->SetTexture(ResourceManagers::GetInstance()->GetTexture("btn_music.tga"));
+			ResourceManagers::GetInstance()->PlaySound(sound);
+			ResourceManagers::GetInstance()->is_muted = false;
+		}
 		});
 	m_listButton.push_back(button);
 	// button close
@@ -84,6 +104,7 @@ void GSPlay::Init()
 	button->Set2DPosition(Globals::screenWidth - 50.0f, 50.0f);
 	button->SetSize(50, 50);
 	button->SetOnClick([this]() {
+		ResourceManagers::GetInstance()->StopSound(sound);
 		GameStateMachine::GetInstance()->PopState();
 		});
 	m_listButton.push_back(button);
@@ -145,8 +166,17 @@ void GSPlay::Init()
 
 	//sound
 	std::string name = "Lobby-Time.mp3";
-	ResourceManagers::GetInstance()->StopSound(name);
-	ResourceManagers::GetInstance()->PlaySound(sound, true);
+	ResourceManagers::GetInstance()->AddSound(name);
+	ResourceManagers::GetInstance()->AddSound(sound);
+	if (ResourceManagers::GetInstance()->is_muted == false)
+	{
+		ResourceManagers::GetInstance()->PlaySound(sound, true);
+		ResourceManagers::GetInstance()->StopSound(name);
+	}
+	else
+	{
+		ResourceManagers::GetInstance()->StopSound(sound);
+	}
 }
 
 
