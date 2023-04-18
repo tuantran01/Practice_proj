@@ -32,12 +32,31 @@ void GSGameOver::Init()
 		});
 	m_listButton.push_back(button);
 	// mute button
-	texture = ResourceManagers::GetInstance()->GetTexture("btn_music.tga");
+	if (ResourceManagers::GetInstance()->is_muted)
+	{
+		texture = ResourceManagers::GetInstance()->GetTexture("btn_music_off.tga");
+	}
+	else
+	{
+		texture = ResourceManagers::GetInstance()->GetTexture("btn_music.tga");
+	}
 	button = std::make_shared<GameButton>(model, shader, texture);
 	button->Set2DPosition(Globals::screenWidth - 50.0f, Globals::screenHeight - 50.0f);
 	button->SetSize(50, 50);
-	button->SetOnClick([]() {
-		ResourceManagers::GetInstance()->StopSound(strBgSoundName);
+	button->SetOnClick([button]() {
+		if (button->GetTexture() == ResourceManagers::GetInstance()->GetTexture("btn_music.tga"))
+		{
+			button->SetTexture(ResourceManagers::GetInstance()->GetTexture("btn_music_off.tga"));
+			ResourceManagers::GetInstance()->StopSound("Lobby-Time.mp3");
+			ResourceManagers::GetInstance()->is_muted = true;
+
+		}
+		else
+		{
+			button->SetTexture(ResourceManagers::GetInstance()->GetTexture("btn_music.tga"));
+			ResourceManagers::GetInstance()->PlaySound("Lobby-Time.mp3");
+			ResourceManagers::GetInstance()->is_muted = false;
+		}
 		});
 	 m_listButton.push_back(button);
 	// exit button
